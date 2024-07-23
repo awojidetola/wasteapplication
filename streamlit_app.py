@@ -42,7 +42,7 @@ if not st.session_state['waste_data'].empty:
     suggestion = get_suggestions(last_entry['Type'])
     st.write(f"Suggestion for {last_entry['Type']} waste: {suggestion}")
 
-data = st.session_state['waste_data'].sort_values()
+data = st.session_state['waste_data'].sort_values(by='Amount')
 
 # Visualize Data
 if st.button("Visualise"):
