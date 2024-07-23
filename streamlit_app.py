@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Title and Description
 st.title("Waste Management Tracker")
@@ -6,20 +8,21 @@ st.write("Track your waste and get suggestions for recycling or composting.")
 
 # Input Waste Data
 waste_type = st.selectbox("Select Waste Type", ["Organic", "Plastic", "Paper", "Metal", "Glass", "Other"])
-waste_amount = st.number_input("Enter amount of waste (in quantity)", min_value=0.0)
+waste_amount = st.number_input("Enter amount of waste (in kg)", min_value=0.0)
 
 # Initialize session state for storing waste data
 if 'waste_data' not in st.session_state:
-    st.session_state['waste_data'] = []
+    st.session_state['waste_data'] = pd.DataFrame(columns=['Type', 'Amount'])
 
 # Add Waste Data
 if st.button("Add Waste"):
-    st.session_state['waste_data'].append({'type': waste_type, 'amount': waste_amount})
+    new_data = pd.DataFrame({'Type': [waste_type], 'Amount': [waste_amount]})
+    st.session_state['waste_data'] = pd.concat([st.session_state['waste_data'], new_data], ignore_index=True)
     st.success(f"Added {waste_amount} kg of {waste_type} waste.")
 
 # Display Waste Data
 st.write("Waste Data:")
-st.write(st.session_state['waste_data'])
+st.dataframe(st.session_state['waste_data'])
 
 # Suggestions for Recycling or Composting
 def get_suggestions(waste_type):
@@ -29,12 +32,19 @@ def get_suggestions(waste_type):
         "Paper": "Recycle paper waste or use it for crafts and projects.",
         "Metal": "Recycle metal waste to reduce environmental impact.",
         "Glass": "Recycle glass waste at designated facilities.",
-        "Other": "Check guidelines online for proper disposal of other types of waste."
+        "Other": "Check local guidelines for proper disposal of other types of waste."
     }
     return suggestions.get(waste_type, "No suggestion available for this type of waste.")
 
 # Display Suggestion for the Last Added Waste Type
-if st.session_state['waste_data']:
-    last_entry = st.session_state['waste_data'][-1]
-    suggestion = get_suggestions(last_entry['type'])
-    st.write(f"Suggestion for {last_entry['type']} waste: {suggestion}")
+if not st.session_state['waste_data'].empty:
+    last_entry = st.session_state['waste_data'].iloc[-1]
+    suggestion = get_suggestions(last_entry['Type'])
+    st.write(f"Suggestion for {last_entry['Type']} waste: {suggestion}")
+
+# Visualize Data
+if st.button("Visualise"):
+    st.write("Waste Data Visualization:")
+    fig, ax = plt.subplots()
+    st.session_state['waste_data'].groupby('Type').sum().plot(kind='bar', ax=ax)
+    st.pyplot(fig)
