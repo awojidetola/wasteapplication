@@ -8,7 +8,7 @@ st.write("Track your waste and get suggestions for recycling or composting.")
 
 # Input Waste Data
 waste_type = st.selectbox("Select Waste Type", ["Organic", "Plastic", "Paper", "Metal", "Glass", "Other"])
-waste_amount = st.number_input("Enter amount of waste (in kg)", min_value=0.0)
+waste_amount = st.number_input("Enter the quantity of waste", min_value=0)
 
 # Initialize session state for storing waste data
 if 'waste_data' not in st.session_state:
@@ -42,9 +42,12 @@ if not st.session_state['waste_data'].empty:
     suggestion = get_suggestions(last_entry['Type'])
     st.write(f"Suggestion for {last_entry['Type']} waste: {suggestion}")
 
+data = st.session_state['waste_data']
+
 # Visualize Data
 if st.button("Visualise"):
     st.write("Waste Data Visualization:")
-    fig, ax = plt.subplots()
-    st.session_state['waste_data'].groupby('Type').sum().plot(kind='bar', ax=ax)
+    st.bar_chart(data.groupby('Type').sum())
+    #fig, ax = plt.subplots()
+    $#st.session_state['waste_data'].groupby('Type').sum().plot(kind='bar', ax=ax)
     st.pyplot(fig)
