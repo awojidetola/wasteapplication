@@ -18,21 +18,21 @@ if 'waste_data' not in st.session_state:
 if st.button("Add Waste"):
     new_data = pd.DataFrame({'Type': [waste_type], 'Amount': [waste_amount]})
     st.session_state['waste_data'] = pd.concat([st.session_state['waste_data'], new_data], ignore_index=True)
-    st.success(f"Added {waste_amount} kg of {waste_type} waste.")
+    st.success(f"Added {waste_amount} quantity of {waste_type} waste.")
 
 # Display Waste Data
 st.write("Waste Data:")
-st.dataframe(st.session_state['waste_data'])
+st.table(st.session_state['waste_data'])
 
 # Suggestions for Recycling or Composting
 def get_suggestions(waste_type):
     suggestions = {
         "Organic": "Consider composting organic waste to create nutrient-rich soil.",
-        "Plastic": "Recycle plastic waste at your nearest recycling center.",
+        "Plastic": "Recycle plastic waste to store other items.",
         "Paper": "Recycle paper waste or use it for crafts and projects.",
         "Metal": "Recycle metal waste to reduce environmental impact.",
         "Glass": "Recycle glass waste at designated facilities.",
-        "Other": "Check local guidelines for proper disposal of other types of waste."
+        "Other": "Check guidelines for proper disposal of other types of waste."
     }
     return suggestions.get(waste_type, "No suggestion available for this type of waste.")
 
@@ -42,7 +42,7 @@ if not st.session_state['waste_data'].empty:
     suggestion = get_suggestions(last_entry['Type'])
     st.write(f"Suggestion for {last_entry['Type']} waste: {suggestion}")
 
-data = st.session_state['waste_data']
+data = st.session_state['waste_data'].sort_values()
 
 # Visualize Data
 if st.button("Visualise"):
