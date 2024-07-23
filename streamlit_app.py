@@ -49,5 +49,5 @@ if st.button("Visualise"):
     st.write("Waste Data Visualization:")
     st.bar_chart(data.groupby('Type').sum())
     #fig, ax = plt.subplots()
-    $#st.session_state['waste_data'].groupby('Type').sum().plot(kind='bar', ax=ax)
+    #st.session_state['waste_data'].groupby('Type').sum().plot(kind='bar', ax=ax)
     st.pyplot(fig)
